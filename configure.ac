@@ -47,12 +47,14 @@ if test x"${SYSTEM_PROJ}" = x""; then
     AC_MSG_ERROR([PROJ download failed.])   
   fi
   
+  R_CPICFLAGS=`${R_HOME}/bin/R CMD config CPICFLAGS`
+
   
   cd proj.4-${PROJ_VERSION}
 
   AC_MSG_NOTICE([Configuring proj ${PROJ_VERSION}])
   sh autogen.sh > /dev/null 2>&1
-  ./configure --prefix="`pwd`/../inst" --enable-static > /dev/null 2>&1
+  ./configure --prefix="`pwd`/../inst" --enable-static CFLAGS=${R_CPICFLAGS}> /dev/null 2>&1
   
   AC_MSG_NOTICE([Compiling proj ${PROJ_VERSION}])
   make > /dev/null 2>&1
