@@ -39,27 +39,55 @@ if test x"${SYSTEM_PROJ}" = x""; then
     AC_MSG_ERROR([proj requires either glibtoolize or libtoolize for configuration purposes.])   
   fi
 
-
-  PROJ_VERSION=4.9.3
-  
-  AC_MSG_NOTICE([Downloading proj ${PROJ_VERSION}])
-  if ! `${R_HOME}/bin/Rscript tools/get_proj.R ${PROJ_VERSION}`; then
-    AC_MSG_ERROR([PROJ download failed.])   
-  fi
-  
   R_CPICFLAGS=`${R_HOME}/bin/R CMD config CPICFLAGS`
+
+
+
+  PROJ_VERSION="4.9.3"
+  PROJ_ZIP="${PROJ_VERSION}.zip"
+  PROJ_DIR="proj.4-${PROJ_VERSION}"
+  PROJ_URL="https://github.com/OSGeo/proj.4/archive/${PROJ_VERSION}.zip"
+
+  AC_MSG_NOTICE([Downloading proj (${PROJ_VERSION})])
+  $(cat <<-EOF | ${R_HOME}/bin/R --slave
+    url = "${PROJ_URL}"; zip = "${PROJ_ZIP}"
+    download.file(url, zip, quiet = TRUE)
+    unzip(zip)
+    unlink(zip)
+EOF)
+
+  if ! test -d "${PROJ_DIR}"; then
+    AC_MSG_ERROR([proj download failed.])   
+  fi
+
+    
+  NAD_DIR="${PROJ_DIR}/nad"
+  DATUM_ZIP="proj-datumgrid-1.5.zip"
+  DATUM_URL="http://download.osgeo.org/proj/${DATUM_ZIP}"
+  DATUM_PATH="${NAD_DIR}/${DATUM_ZIP}"
+
+  AC_MSG_NOTICE([Downloading proj datum])
+  $(cat <<-EOF | ${R_HOME}/bin/R --slave
+    url = "${DATUM_URL}"; file = "${DATUM_PATH}"
+    download.file(url, file, quiet = TRUE)
+    unzip(file, exdir = "${NAD_DIR}")
+    #unlink(file)
+EOF)
+
+  if ! test -e "${NAD_DIR}/conus.lla"; then
+    AC_MSG_ERROR([proj datum download failed.])   
+  fi
+
 
   
   cd proj.4-${PROJ_VERSION}
 
-  AC_MSG_NOTICE([Configuring proj ${PROJ_VERSION}])
+  AC_MSG_NOTICE([Configuring proj])
   sh autogen.sh > /dev/null 2>&1
   ./configure --prefix="`pwd`/../inst" --enable-static CFLAGS=${R_CPICFLAGS}> /dev/null 2>&1
   
-  AC_MSG_NOTICE([Compiling proj ${PROJ_VERSION}])
+  AC_MSG_NOTICE([Compiling proj])
   make > /dev/null 2>&1
-
-  AC_MSG_NOTICE([Installing proj ${PROJ_VERSION}])
   make install > /dev/null 2>&1
 
   cd ..
@@ -68,7 +96,7 @@ if test x"${SYSTEM_PROJ}" = x""; then
     AC_MSG_ERROR([Building proj failed.])   
   fi
 
-  #rm -rf "proj.4-${PROJ_VERSION}"
+  rm -rf "proj.4-${PROJ_VERSION}"
 
   PROJ_LIBS="`pwd`/inst/lib/libproj.a"
   PROJ_CPPFLAGS="-I`pwd`/inst/include"
