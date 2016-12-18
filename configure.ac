@@ -27,6 +27,19 @@ if test x"${SYSTEM_PROJ}" = x""; then
       AC_MSG_ERROR([Could not determine R_HOME.])   
   fi
 
+  LIBTOOLIZE=""
+  for libtoolize in glibtoolize libtoolize; do
+      LIBTOOLIZE=`which $libtoolize 2>/dev/null`
+      if test "$LIBTOOLIZE"; then
+          break;
+      fi
+  done
+
+  if ! test x"${LIBTOOLIZE}" = x""; then
+    AC_MSG_ERROR([proj requires either glibtoolize or libtoolize for configuration purposes.])   
+  fi
+
+
   PROJ_VERSION=4.9.3
   
   AC_MSG_NOTICE([Downloading proj ${PROJ_VERSION}])
@@ -39,8 +52,7 @@ if test x"${SYSTEM_PROJ}" = x""; then
   cd proj.4-${PROJ_VERSION}
 
   AC_MSG_NOTICE([Configuring proj ${PROJ_VERSION}])
-  #sh autogen.sh > /dev/null 2>&1
-  aclocal
+  sh autogen.sh > /dev/null 2>&1
   ./configure --prefix="`pwd`/../inst" --disable-shared --enable-static > /dev/null 2>&1
   
   AC_MSG_NOTICE([Compiling proj ${PROJ_VERSION}])
