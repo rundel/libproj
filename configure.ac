@@ -66,7 +66,7 @@ if test x"${SYSTEM_PROJ}" = x""; then
     AC_MSG_ERROR([Building proj failed.])   
   fi
 
-  rm -rf "proj.4-${PROJ_VERSION}"
+  #rm -rf "proj.4-${PROJ_VERSION}"
 
   PROJ_LIBS="`pwd`/inst/lib/libproj.a"
   PROJ_CPPFLAGS="-I`pwd`/inst/include"
