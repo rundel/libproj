@@ -48,18 +48,17 @@ if test x"${SYSTEM_PROJ}" = x""; then
   fi
   
   
-  mkdir inst
   cd proj.4-${PROJ_VERSION}
 
   AC_MSG_NOTICE([Configuring proj ${PROJ_VERSION}])
-  sh autogen.sh > /dev/null 2>&1
-  ./configure --prefix="`pwd`/../inst" --disable-shared --enable-static > /dev/null 2>&1
+  sh autogen.sh #> /dev/null 2>&1
+  ./configure --prefix="`pwd`/../inst" --disable-shared --enable-static #> /dev/null 2>&1
   
   AC_MSG_NOTICE([Compiling proj ${PROJ_VERSION}])
-  make > /dev/null 2>&1
+  make #> /dev/null 2>&1
 
   AC_MSG_NOTICE([Installing proj ${PROJ_VERSION}])
-  make install > /dev/null 2>&1
+  make install #> /dev/null 2>&1
 
   cd ..
 

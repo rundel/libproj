@@ -10,3 +10,5 @@ src/*.so
 src/*.dll
 configure
 src/symbols.rds
+config.log
+proj.4-*/
