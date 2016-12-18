@@ -1,3 +1,6 @@
+autom4te.cache/
+libproj.Rcheck/
+libproj_*.tar.gz
 .Rproj.user
 .Rprofile
 .Rhistory
@@ -6,3 +9,4 @@ src/*.o
 src/*.so
 src/*.dll
 configure
+src/symbols.rds
