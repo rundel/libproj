@@ -35,7 +35,7 @@ if test x"${SYSTEM_PROJ}" = x""; then
       fi
   done
 
-  if ! test x"${LIBTOOLIZE}" = x""; then
+  if test x"${LIBTOOLIZE}" = x""; then
     AC_MSG_ERROR([proj requires either glibtoolize or libtoolize for configuration purposes.])   
   fi
 
