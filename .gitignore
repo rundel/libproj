@@ -12,3 +12,6 @@ configure
 src/symbols.rds
 config.log
 proj.4-*/
+inst/
+config.status
+src/Makevars
