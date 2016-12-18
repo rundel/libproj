@@ -1,0 +1,7 @@
+^\.git
+^.*\.Rproj$
+^\.Rproj\.user$
+\.Rprofile
+\.gitignore
+\.travis.yml
+proj\.4.*
