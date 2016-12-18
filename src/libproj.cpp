@@ -22,7 +22,6 @@ Rcpp::NumericMatrix test_api(Rcpp::NumericMatrix lat_long)
 
   projPJ pj_merc = pj_init_plus("+proj=merc +ellps=clrk66 +lat_ts=33");
   projPJ pj_latlong = pj_init_plus("+proj=latlong +ellps=clrk66");
-  double x, y;
 
   if (!pj_merc || !pj_latlong)
     Rcpp::stop("Initialization failed");

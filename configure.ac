@@ -52,7 +52,7 @@ if test x"${SYSTEM_PROJ}" = x""; then
 
   AC_MSG_NOTICE([Configuring proj ${PROJ_VERSION}])
   sh autogen.sh > /dev/null 2>&1
-  ./configure --prefix="`pwd`/../inst" --disable-shared --enable-static > /dev/null 2>&1
+  ./configure --prefix="`pwd`/../inst" --enable-static > /dev/null 2>&1
   
   AC_MSG_NOTICE([Compiling proj ${PROJ_VERSION}])
   make > /dev/null 2>&1
