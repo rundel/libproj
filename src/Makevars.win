@@ -11,13 +11,13 @@ CXX_STD = CXX11
 all: clean winlibs
 
 winlibs:
-    mkdir -p ../windows
-    "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "download.file('https://github.com/rwinlib/proj/archive/v${PROJ_VERSON}.zip','../windows/lib.zip')"
-    "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "unzip('../windows/lib.zip', exdir = '../windows')"
-    cp -r ../windows/proj-${PROJ_VERSON}/include ../inst/
+	mkdir -p ../windows
+	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "download.file('https://github.com/rwinlib/proj/archive/v${PROJ_VERSON}.zip','../windows/lib.zip')"
+	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "unzip('../windows/lib.zip', exdir = '../windows')"
+	cp -r ../windows/proj-${PROJ_VERSON}/include ../inst/
 
 clean:
-    rm -f ../inst/include ../windows
+	rm -f ../inst/include ../windows
 
 .PHONY: all winlibs clean
 
