@@ -52,32 +52,21 @@ if test x"${SYSTEM_PROJ}" = x""; then
   PROJ_URL="http://download.osgeo.org/proj/proj-${PROJ_VERSION}.zip"
 
   AC_MSG_NOTICE([Downloading proj (${PROJ_VERSION})])
-  $(cat <<-EOF | ${R_HOME}/bin/R --slave
-    url = "${PROJ_URL}"; zip = "${PROJ_ZIP}"
-    download.file(url, zip, quiet = TRUE)
-    unzip(zip)
-    unlink(zip)
-EOF)
+  ${R_HOME}/bin/Rscript tools/download_zip.R "${PROJ_URL}" "${PROJ_ZIP}" "./"
 
   if ! test -d "${PROJ_DIR}"; then
     AC_MSG_ERROR([proj download failed.])   
   fi
 
     
-  NAD_DIR="${PROJ_DIR}/nad"
+  DATUM_DIR="${PROJ_DIR}/nad"
   DATUM_ZIP="proj-datumgrid-${DATUM_VERSION}.zip"
   DATUM_URL="http://download.osgeo.org/proj/${DATUM_ZIP}"
-  DATUM_PATH="${NAD_DIR}/${DATUM_ZIP}"
 
   AC_MSG_NOTICE([Downloading proj datum (${DATUM_VERSION})])
-  $(cat <<-EOF | ${R_HOME}/bin/R --slave
-    url = "${DATUM_URL}"; file = "${DATUM_PATH}"
-    download.file(url, file, quiet = TRUE)
-    unzip(file, exdir = "${NAD_DIR}")
-    unlink(file)
-EOF)
+  ${R_HOME}/bin/Rscript tools/download_zip.R "${DATUM_URL}" "${DATUM_ZIP}" "${DATUM_DIR}"
 
-  if ! test -e "${NAD_DIR}/conus"; then
+  if ! test -e "${DATUM_DIR}/conus"; then
     AC_MSG_ERROR([proj datum download failed.])   
   fi
 
