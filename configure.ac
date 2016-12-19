@@ -27,26 +27,29 @@ if test x"${SYSTEM_PROJ}" = x""; then
       AC_MSG_ERROR([Could not determine R_HOME.])   
   fi
 
-  LIBTOOLIZE=""
-  for libtoolize in glibtoolize libtoolize; do
-      LIBTOOLIZE=`which $libtoolize 2>/dev/null`
-      if test "$LIBTOOLIZE"; then
-          break;
-      fi
-  done
+  # LIBTOOLIZE=""
+  # for libtoolize in glibtoolize libtoolize; do
+  #     LIBTOOLIZE=`which $libtoolize 2>/dev/null`
+  #     if test "$LIBTOOLIZE"; then
+  #         break;
+  #     fi
+  # done
 
-  if test x"${LIBTOOLIZE}" = x""; then
-    AC_MSG_ERROR([proj requires either glibtoolize or libtoolize for configuration purposes.])   
-  fi
+  # if test x"${LIBTOOLIZE}" = x""; then
+  #   AC_MSG_ERROR([proj requires either glibtoolize or libtoolize for configuration purposes.])   
+  # fi
 
   R_CPICFLAGS=`${R_HOME}/bin/R CMD config CPICFLAGS`
 
 
-
   PROJ_VERSION="4.9.3"
-  PROJ_ZIP="${PROJ_VERSION}.zip"
-  PROJ_DIR="proj.4-${PROJ_VERSION}"
-  PROJ_URL="https://github.com/OSGeo/proj.4/archive/${PROJ_VERSION}.zip"
+  DATUM_VERSION="1.6"
+
+  
+  PROJ_ZIP="proj-${PROJ_VERSION}.zip"
+  PROJ_DIR="proj-${PROJ_VERSION}"
+  #PROJ_URL="https://github.com/OSGeo/proj.4/archive/${PROJ_VERSION}.zip"
+  PROJ_URL="http://download.osgeo.org/proj/proj-${PROJ_VERSION}.zip"
 
   AC_MSG_NOTICE([Downloading proj (${PROJ_VERSION})])
   $(cat <<-EOF | ${R_HOME}/bin/R --slave
@@ -62,29 +65,30 @@ EOF)
 
     
   NAD_DIR="${PROJ_DIR}/nad"
-  DATUM_ZIP="proj-datumgrid-1.5.zip"
+  DATUM_ZIP="proj-datumgrid-${DATUM_VERSION}.zip"
   DATUM_URL="http://download.osgeo.org/proj/${DATUM_ZIP}"
   DATUM_PATH="${NAD_DIR}/${DATUM_ZIP}"
 
-  AC_MSG_NOTICE([Downloading proj datum])
+  AC_MSG_NOTICE([Downloading proj datum (${DATUM_VERSION})])
   $(cat <<-EOF | ${R_HOME}/bin/R --slave
     url = "${DATUM_URL}"; file = "${DATUM_PATH}"
     download.file(url, file, quiet = TRUE)
     unzip(file, exdir = "${NAD_DIR}")
-    #unlink(file)
+    unlink(file)
 EOF)
 
-  if ! test -e "${NAD_DIR}/conus.lla"; then
+  if ! test -e "${NAD_DIR}/conus"; then
     AC_MSG_ERROR([proj datum download failed.])   
   fi
 
 
   
-  cd proj.4-${PROJ_VERSION}
+  cd ${PROJ_DIR}
+  echo "Changing to `pwd`"
 
   AC_MSG_NOTICE([Configuring proj])
-  sh autogen.sh > /dev/null 2>&1
-  ./configure --prefix="`pwd`/../inst" --enable-static CFLAGS=${R_CPICFLAGS}> /dev/null 2>&1
+  #sh autogen.sh > /dev/null 2>&1
+  sh ./configure --prefix="`pwd`/../inst" --enable-static CFLAGS=${R_CPICFLAGS}> /dev/null 2>&1
   
   AC_MSG_NOTICE([Compiling proj])
   make > /dev/null 2>&1
