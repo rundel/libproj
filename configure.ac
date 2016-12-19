@@ -77,7 +77,8 @@ if test x"${SYSTEM_PROJ}" = x""; then
 
   AC_MSG_NOTICE([Configuring proj])
   #sh autogen.sh > /dev/null 2>&1
-  sh ./configure --prefix="`pwd`/../inst" --enable-static CFLAGS=${R_CPICFLAGS}> /dev/null 2>&1
+  autoconf
+  sh ./configure --prefix="`pwd`/../inst" --enable-static CFLAGS=${R_CPICFLAGS} > /dev/null 2>&1
   
   AC_MSG_NOTICE([Compiling proj])
   make > /dev/null 2>&1
