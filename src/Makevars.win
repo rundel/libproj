@@ -1,20 +1,16 @@
-PROJ_VERSON = 4.9.3
-
-RWINLIB = lib${subst gcc,,${COMPILED_BY}}${R_ARCH}
-
-PKG_CPPFLAGS = -I../inst/inclide 
-
-PKG_LIBS = -L../windows/proj-${PROJ_VERSION}/lib-${PROJ_VERSION}/${R_ARCH}/ -lproj
-
-CXX_STD = CXX11
+PKG_CPPFLAGS = -I../inst/include 
+PKG_LIBS = -L../windows/proj-4.9.3/lib-4.9.3/${R_ARCH}/ -lproj
 
 all: clean winlibs
 
 winlibs:
 	mkdir -p ../windows
-	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "download.file('https://github.com/rwinlib/proj/archive/v${PROJ_VERSON}.zip','../windows/lib.zip')"
-	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "unzip('../windows/lib.zip', exdir = '../windows')"
-	cp -r ../windows/proj-${PROJ_VERSON}/include ../inst/
+	${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe -e "download.file('https://github.com/rwinlib/proj/archive/v4.9.3.zip','../windows/lib.zip')"
+	${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe -e "unzip('../windows/lib.zip', exdir = '../windows')"
+	cp -r ../windows/proj-4.9.3 ../inst/
+	rm -r ../inst/lib-*	
+	ls -l ../inst/
+	ls -l ../inst/include
 
 clean:
 	rm -f ../inst/include ../windows
