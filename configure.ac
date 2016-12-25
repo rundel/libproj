@@ -1,6 +1,6 @@
 AC_PREREQ(2.61)
 
-AC_INIT([libproj], [0.0.4.9.3])
+AC_INIT([libproj], [4.9.3])
 
 AC_LANG(C++)
 AC_REQUIRE_CPP
@@ -27,18 +27,6 @@ if test x"${SYSTEM_PROJ}" = x""; then
       AC_MSG_ERROR([Could not determine R_HOME.])   
   fi
 
-  # LIBTOOLIZE=""
-  # for libtoolize in glibtoolize libtoolize; do
-  #     LIBTOOLIZE=`which $libtoolize 2>/dev/null`
-  #     if test "$LIBTOOLIZE"; then
-  #         break;
-  #     fi
-  # done
-
-  # if test x"${LIBTOOLIZE}" = x""; then
-  #   AC_MSG_ERROR([proj requires either glibtoolize or libtoolize for configuration purposes.])   
-  # fi
-
   R_CPICFLAGS=`${R_HOME}/bin/R CMD config CPICFLAGS`
 
 
@@ -51,8 +39,10 @@ if test x"${SYSTEM_PROJ}" = x""; then
   #PROJ_URL="https://github.com/OSGeo/proj.4/archive/${PROJ_VERSION}.zip"
   PROJ_URL="http://download.osgeo.org/proj/proj-${PROJ_VERSION}.zip"
 
-  AC_MSG_NOTICE([Downloading proj (${PROJ_VERSION})])
-  ${R_HOME}/bin/Rscript tools/download_zip.R "${PROJ_URL}" "${PROJ_ZIP}" "./"
+  if ! test -d "${PROJ_DIR}"; then
+    AC_MSG_NOTICE([Downloading proj (${PROJ_VERSION})])
+    ${R_HOME}/bin/Rscript tools/download_zip.R "${PROJ_URL}" "${PROJ_ZIP}" "./"
+  fi
 
   if ! test -d "${PROJ_DIR}"; then
     AC_MSG_ERROR([proj download failed.])   
@@ -63,8 +53,10 @@ if test x"${SYSTEM_PROJ}" = x""; then
   DATUM_ZIP="proj-datumgrid-${DATUM_VERSION}.zip"
   DATUM_URL="http://download.osgeo.org/proj/${DATUM_ZIP}"
 
-  AC_MSG_NOTICE([Downloading proj datum (${DATUM_VERSION})])
-  ${R_HOME}/bin/Rscript tools/download_zip.R "${DATUM_URL}" "${DATUM_ZIP}" "${DATUM_DIR}"
+  if ! test -e "${DATUM_DIR}/conus"; then
+    AC_MSG_NOTICE([Downloading proj datum (${DATUM_VERSION})])
+    ${R_HOME}/bin/Rscript tools/download_zip.R "${DATUM_URL}" "${DATUM_ZIP}" "${DATUM_DIR}"
+  fi
 
   if ! test -e "${DATUM_DIR}/conus"; then
     AC_MSG_ERROR([proj datum download failed.])   
@@ -75,16 +67,17 @@ if test x"${SYSTEM_PROJ}" = x""; then
   cd ${PROJ_DIR}
   echo "Changing to `pwd`"
 
+  INST_DIR=`cd ../inst;pwd`
+
   AC_MSG_NOTICE([Configuring proj])
   #sh autogen.sh > /dev/null 2>&1
   aclocal
   automake
   autoconf
-  sh ./configure --prefix="`pwd`/../inst" --enable-static CFLAGS=${R_CPICFLAGS} > /dev/null 2>&1
+  sh ./configure --prefix="${INST_DIR}" --enable-static --disable-shared CFLAGS=${R_CPICFLAGS} #> /dev/null 2>&1
   
   AC_MSG_NOTICE([Compiling proj])
-  make > /dev/null 2>&1
-  make install > /dev/null 2>&1
+  make install #> /dev/null 2>&1
 
   cd ..
 
@@ -92,10 +85,12 @@ if test x"${SYSTEM_PROJ}" = x""; then
     AC_MSG_ERROR([Building proj failed.])   
   fi
 
-  rm -rf "proj.4-${PROJ_VERSION}"
+  #rm -rf "proj.4-${PROJ_VERSION}"
 
-  PROJ_LIBS="`pwd`/inst/lib/libproj.a"
-  PROJ_CPPFLAGS="-I`pwd`/inst/include"
+  strip -x -S inst/lib/libgeos.a
+
+  PROJ_LIBS="${INST_DIR}/lib/libproj.a"
+  PROJ_CPPFLAGS="-I${INST_DIR}/include"
 
 else # User provided prefix for proj
 
@@ -125,9 +120,6 @@ else # User provided prefix for proj
 
 fi
 
-
-
-## now use all these
 AC_SUBST([PKG_CPPFLAGS],["${PKG_CPPFLAGS} ${PROJ_CPPFLAGS}"])
 AC_SUBST([PKG_LIBS],["${PKG_LIBS} ${PROJ_LIBS}"])
 AC_CONFIG_FILES([src/Makevars])

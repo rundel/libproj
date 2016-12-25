@@ -8,12 +8,9 @@ winlibs:
 	${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe -e "download.file('https://github.com/rwinlib/proj/archive/v4.9.3.zip','../windows/lib.zip')"
 	${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe -e "unzip('../windows/lib.zip', exdir = '../windows')"
 	cp -r ../windows/proj-4.9.3 ../inst/
-	rm -r ../inst/lib-*	
-	ls -l ../inst/
-	ls -l ../inst/include
 
 clean:
-	rm -f ../inst/include ../windows
+	rm -f $(OBJECTS) $(SHLIB)
 
 .PHONY: all winlibs clean
 

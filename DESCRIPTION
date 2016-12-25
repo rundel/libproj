@@ -12,3 +12,4 @@ LinkingTo: Rcpp
 Imports: Rcpp (>= 0.11.0)
 URL: http://www.github.com/rundel/libproj
 BugReports: http://www.github.com/rundel/libproj/issues
+SystemRequirements: automake
