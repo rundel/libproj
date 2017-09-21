@@ -1,7 +1,8 @@
 PROJ_VERSION = `cat ../proj_version`
+RWINLIB_VERSION = "4.9.3"
 
 PKG_CPPFLAGS = -I../inst/include 
-PKG_LIBS = -L../windows/proj-${PROJ_VERSION}/lib-${PROJ_VERSION}/${R_ARCH}/ -lproj
+PKG_LIBS = -L../inst/lib/ -lproj
 
 all: clean winlibs flags
 
@@ -9,7 +10,8 @@ winlibs:
 	mkdir -p ../windows
 	${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe -e "download.file('https://github.com/rwinlib/proj/archive/v${PROJ_VERSION}.zip','../windows/lib.zip')"
 	${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe -e "unzip('../windows/lib.zip', exdir = '../windows')"
-	cp -r ../windows/proj-4.9.3 ../inst/
+	mv ../windows/proj-${PROJ_VERSION}/include ../inst/
+	mv ../windows/proj-${PROJ_VERSION}/lib-${RWINLIB_VERSION}/${R_ARCH}/ ../inst/lib
 	rm -rf ../windows/
 
 clean:
