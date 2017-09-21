@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // proj_version
 Rcpp::IntegerVector proj_version();
-RcppExport SEXP libproj_proj_version() {
+RcppExport SEXP _libproj_proj_version() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -17,7 +17,7 @@ END_RCPP
 }
 // test_api
 Rcpp::NumericMatrix test_api(Rcpp::NumericMatrix lat_long);
-RcppExport SEXP libproj_test_api(SEXP lat_longSEXP) {
+RcppExport SEXP _libproj_test_api(SEXP lat_longSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -25,4 +25,15 @@ BEGIN_RCPP
     rcpp_result_gen = Rcpp::wrap(test_api(lat_long));
     return rcpp_result_gen;
 END_RCPP
+}
+
+static const R_CallMethodDef CallEntries[] = {
+    {"_libproj_proj_version", (DL_FUNC) &_libproj_proj_version, 0},
+    {"_libproj_test_api", (DL_FUNC) &_libproj_test_api, 1},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_libproj(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
 }

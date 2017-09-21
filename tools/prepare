@@ -1,0 +1,45 @@
+#!/bin/sh
+
+PROJ_VERSION="4.9.3"
+DATUM_VERSION="1.6"
+
+printf ${PROJ_VERSION} > proj_version
+printf ${DATUM_VERSION} > datum_version
+
+PROJ_URL="http://download.osgeo.org/proj/proj-${PROJ_VERSION}.zip"
+DATUM_URL="http://download.osgeo.org/proj/proj-datumgrid-${DATUM_VERSION}.zip"
+
+PROJ_DIR="proj-${PROJ_VERSION}"
+DATUM_DIR="${PROJ_DIR}/nad"
+
+R_HOME=`R RHOME`
+if test -z "${R_HOME}"; then
+  echo "Could not determine R_HOME."
+  exit1
+fi
+
+
+if ! test -d "${PROJ_DIR}"; then
+  echo "Downloading proj v${PROJ_VERSION} from ${PROJ_URL}."
+  ${R_HOME}/bin/Rscript tools/download_zip.R "${PROJ_URL}" "./"
+fi
+
+if ! test -e "${DATUM_DIR}/conus"; then
+  echo "Downloading datum v${DATUM_VERSION} from ${DATUM_URL}."
+  ${R_HOME}/bin/Rscript tools/download_zip.R "${DATUM_URL}" "${DATUM_DIR}"
+fi
+
+
+cd ${PROJ_DIR}
+
+if test -e "Makefile"; then
+  make clean
+fi
+
+aclocal
+automake
+autoconf
+
+cd ..
+
+autoconf

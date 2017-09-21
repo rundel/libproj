@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#rm -rf configure
+rm -rf configure
 rm -rf autom4te.cache/ 
 rm -f config.log config.status 
 
@@ -16,3 +16,7 @@ rm -rf inst/bin
 rm -rf proj*/
 
 rm -rf windows/
+
+tools/prepare
+
+autoconf
