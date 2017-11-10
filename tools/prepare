@@ -1,45 +1,50 @@
 #!/bin/sh
 
+rm -rf /src/proj
+rm -rf /src/proj-*
+
 PROJ_VERSION="4.9.3"
 DATUM_VERSION="1.6"
 
-printf ${PROJ_VERSION} > proj_version
-printf ${DATUM_VERSION} > datum_version
+#printf ${PROJ_VERSION} > proj_version
+#printf ${DATUM_VERSION} > datum_version
 
 PROJ_URL="http://download.osgeo.org/proj/proj-${PROJ_VERSION}.zip"
 DATUM_URL="http://download.osgeo.org/proj/proj-datumgrid-${DATUM_VERSION}.zip"
 
-PROJ_DIR="proj-${PROJ_VERSION}"
+SRC_DIR="src/"
+PROJ_DIR="${SRC_DIR}/proj"
 DATUM_DIR="${PROJ_DIR}/nad"
 
-R_HOME=`R RHOME`
+if test -z "${R_HOME}"; then
+  R_HOME=`R RHOME`
+fi
+  
 if test -z "${R_HOME}"; then
   echo "Could not determine R_HOME."
-  exit1
+  exit 1
 fi
 
-
-if ! test -d "${PROJ_DIR}"; then
-  echo "Downloading proj v${PROJ_VERSION} from ${PROJ_URL}."
-  ${R_HOME}/bin/Rscript tools/download_zip.R "${PROJ_URL}" "./"
+RSCRIPT="${R_HOME}/bin/Rscript"
+if ! test -e "${RSCRIPT}"; then
+  echo "Could not find Rscript."
+  exit 1
 fi
+
+echo "Downloading proj v${PROJ_VERSION} from ${PROJ_URL}."
+${RSCRIPT} tools/download_zip.R "${PROJ_URL}" "${SRC_DIR}"
+mv src/proj-*.*.* src/proj
 
 if ! test -e "${DATUM_DIR}/conus"; then
   echo "Downloading datum v${DATUM_VERSION} from ${DATUM_URL}."
-  ${R_HOME}/bin/Rscript tools/download_zip.R "${DATUM_URL}" "${DATUM_DIR}"
+  ${RSCRIPT} tools/download_zip.R "${DATUM_URL}" "${DATUM_DIR}"
 fi
 
+ROOT_DIR="`pwd`"
 
 cd ${PROJ_DIR}
-
+aclocal
+autoconf
 if test -e "Makefile"; then
   make clean
 fi
-
-aclocal
-automake
-autoconf
-
-cd ..
-
-autoconf

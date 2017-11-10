@@ -16,6 +16,8 @@ winlibs:
 
 clean:
 	rm -f $(OBJECTS) $(SHLIB)
+  rm -rf ../windows/
+  rm -f ../inst/build_flags
 
 flags:
 	printf "PKG_CPPFLAGS=${PKG_CPPFLAGS}\nPKG_LIBS=${PKG_LIBS}\n" > ../inst/build_flags

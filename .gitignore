@@ -11,10 +11,7 @@ src/*.dll
 configure
 src/symbols.rds
 config.log
-proj-*/
 inst/
 config.status
 src/Makevars
-
-datum_version
-proj_version
+src/proj/
